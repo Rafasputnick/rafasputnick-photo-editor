@@ -3,10 +3,8 @@ from filters.bw_filter import BwFilter
 from filters.sepia_filter import SepiaFilter
 from layout.modals.color_filter_modal import ColorFilterModal
 from layout.modals.custom_filter_modal import CustomFilterModal
-from layout.modals.low_quality_modal import LowQualityModal
-from layout.modals.new_format_modal import NewFormatModal
-from layout.modals.thumb_modal import ThumbModal
-from layout.modals.upload_modal import UploadModal
+from layout.modals.export_modal import ExportModal
+from layout.modals.import_modal import ImportModal
 from layout.windows.window import Window
 from utils import update_image
 
@@ -21,8 +19,7 @@ class MainWindow(Window):
                             "File",
                             [
                                 "Import",
-                                "Export",
-                                ["Thumb", "Low quality", "New format"],
+                                "Export"
                             ],
                         ],
                         ["Filters", ["B&W", "Sepia", "Custom", "Colors"]],
@@ -32,10 +29,8 @@ class MainWindow(Window):
             [sg.Image(key="-IMAGE-", expand_x=True, expand_y=True)],
         ]
         func_map = {
-            "Import": self.load_image,
-            "Thumb": self.save_thumb,
-            "Low quality": self.save_low_quality,
-            "New format": self.save_new_format,
+            "Import": self.import_image,
+            "Export": self.export_image,
             "BW": self.aply_bw_filter,
             "Sepia": self.aply_sepia_filter,
             "Custom": self.customWhite,
@@ -43,26 +38,17 @@ class MainWindow(Window):
         }
         super().__init__(layout, func_map)
         self.current_image = None
-        self.path = None
 
     def start(self):
         super().start("Sputnick Photo Editor")
 
-    def load_image(self, value: dict):
-        modal = UploadModal()
-        self.current_image, self.path = modal.start()
+    def import_image(self, value: dict):
+        modal = ImportModal()
+        self.current_image = modal.start()
         update_image(self.current_image, self.window)
 
-    def save_thumb(self, value: dict):
-        modal = ThumbModal(self.current_image, self.path)
-        modal.start()
-
-    def save_low_quality(self, value: dict):
-        modal = LowQualityModal(self.current_image, self.path)
-        modal.start()
-
-    def save_new_format(self, value: dict):
-        modal = NewFormatModal(self.current_image, self.path)
+    def export_image(self, value: dict):
+        modal = ExportModal(self.current_image, "")
         modal.start()
 
     def customWhite(self, value: dict):
