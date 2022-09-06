@@ -1,9 +1,8 @@
 import os
 
 import PySimpleGUI as sg
+from layout.windows.window import Window
 from PIL import Image
-
-from template.window import Window
 
 
 class NewFormatModal(Window):
@@ -16,16 +15,16 @@ class NewFormatModal(Window):
                     key="-FORMAT-",
                     default_value="JPEG",
                 ),
-                sg.Button("Save"),
+                sg.Button("Export"),
             ]
         ]
-        func_map = {"Save": self.save_new_format}
+        func_map = {"Export": self.save_new_format}
         super().__init__(layout, func_map)
         self.current_image = image
         self.path = path
 
     def start(self):
-        super().start("Save in another format", True)
+        super().start("Export in another format", True)
 
     def add_path_suffix(self, suffix: str):
         filename, file_extension = os.path.splitext(self.path)

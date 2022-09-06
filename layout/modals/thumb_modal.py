@@ -2,9 +2,8 @@ import copy
 import os
 
 import PySimpleGUI as sg
+from layout.windows.window import Window
 from PIL import Image
-
-from template.window import Window
 
 
 class ThumbModal(Window):
@@ -15,16 +14,16 @@ class ThumbModal(Window):
                 sg.Input(size=(10, 1), key="-WIDTH-", default_text="500"),
                 sg.Text("Height:"),
                 sg.Input(size=(10, 1), key="-HEIGHT-", default_text="500"),
-                sg.Button("Save"),
+                sg.Button("Export"),
             ]
         ]
-        func_map = {"Save": self.save_thumb}
+        func_map = {"Export": self.save_thumb}
         super().__init__(layout, func_map)
         self.current_image = image
         self.path = path
 
     def start(self):
-        super().start("Save as thumbnail", True)
+        super().start("Export as thumbnail", True)
 
     def add_path_suffix(self, suffix: str):
         filename, file_extension = os.path.splitext(self.path)

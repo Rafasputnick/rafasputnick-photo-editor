@@ -1,9 +1,8 @@
 import os
 
 import PySimpleGUI as sg
+from layout.windows.window import Window
 from PIL import Image
-
-from template.window import Window
 
 
 class LowQualityModal(Window):
@@ -12,16 +11,16 @@ class LowQualityModal(Window):
             [
                 sg.Text("Quality (0% - 100%):"),
                 sg.Input(size=(10, 1), key="-QUALITY-", default_text="70"),
-                sg.Button("Save"),
+                sg.Button("Export"),
             ]
         ]
-        func_map = {"Save": self.save_low_quality}
+        func_map = {"Export": self.save_low_quality}
         super().__init__(layout, func_map)
         self.current_image = image
         self.path = path
 
     def start(self):
-        super().start("Save in a lower quality", True)
+        super().start("Export in a lower quality", True)
 
     def add_path_suffix(self, suffix: str):
         filename, file_extension = os.path.splitext(self.path)

@@ -19,14 +19,14 @@ class Window:
                 print("Erro ao encontrar evento")
 
         except Exception as error:
-            sg.Popup("ERROR", error, icon="error.ico")
+            sg.Popup("ERROR", error, icon="image/error.ico")
 
     def close(self):
         self.keep_open = False
 
     def start(self, windows_name: str, is_modal: bool = False):
         self.window = sg.Window(
-            windows_name, layout=self.layout, modal=is_modal, icon="icon.ico"
+            windows_name, layout=self.layout, modal=is_modal, icon="image/icon.ico"
         )
 
         if not is_modal:

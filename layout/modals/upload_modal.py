@@ -5,9 +5,8 @@ import re
 import PySimpleGUI as sg
 import requests
 import validators
+from layout.windows.window import Window
 from PIL import Image
-
-from template.window import Window
 
 
 class UploadModal(Window):
@@ -20,18 +19,17 @@ class UploadModal(Window):
                     button_text="Browse",
                     file_types=[("JPEG (*.jpg)", "*.jpg"), ("Todos os arquivos", "*")],
                 ),
-                sg.Button("Open"),
+                sg.Button("Import"),
             ]
         ]
-        func_map = {"Open": self.load_image}
+        func_map = {"Import": self.load_image}
         super().__init__(layout, func_map)
         self.current_image = None
         self.path = None
-        self.bio = None
 
     def start(self):
         super().start("Load image", True)
-        return self.current_image, self.path, self.bio
+        return self.current_image, self.path
 
     def load_image(self, value: dict):
 
@@ -51,8 +49,5 @@ class UploadModal(Window):
             self.current_image = Image.open(self.path)
         else:
             raise Exception("An error happened when open the image")
-
-        self.bio = io.BytesIO()
-        self.current_image.save(self.bio, format="PNG")
 
         self.close()
