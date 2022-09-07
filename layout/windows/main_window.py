@@ -5,6 +5,7 @@ from layout.modals.color_filter_modal import ColorFilterModal
 from layout.modals.custom_filter_modal import CustomFilterModal
 from layout.modals.export_modal import ExportModal
 from layout.modals.import_modal import ImportModal
+from layout.modals.info_modal import InfoModal
 from layout.windows.window import Window
 from utils import update_image
 
@@ -17,10 +18,7 @@ class MainWindow(Window):
                     [
                         [
                             "File",
-                            [
-                                "Import",
-                                "Export"
-                            ],
+                            ["Import", "Export as", "Save", "Info"],
                         ],
                         ["Filters", ["B&W", "Sepia", "Custom", "Colors"]],
                     ]
@@ -30,7 +28,9 @@ class MainWindow(Window):
         ]
         func_map = {
             "Import": self.import_image,
-            "Export": self.export_image,
+            "Export as": self.export_image,
+            "Save": self.save,
+            "Info": self.show_info,
             "BW": self.aply_bw_filter,
             "Sepia": self.aply_sepia_filter,
             "Custom": self.customWhite,
@@ -38,17 +38,27 @@ class MainWindow(Window):
         }
         super().__init__(layout, func_map)
         self.current_image = None
+        self.filename = "Untitled"
 
     def start(self):
         super().start("Sputnick Photo Editor")
 
     def import_image(self, value: dict):
         modal = ImportModal()
-        self.current_image = modal.start()
+        self.current_image, self.filename = modal.start()
         update_image(self.current_image, self.window)
 
     def export_image(self, value: dict):
-        modal = ExportModal(self.current_image, "")
+        modal = ExportModal(self.current_image, self.filename)
+        self.current_image, self.filename = modal.start()
+        update_image(self.current_image, self.window)
+
+    def save(self, value: dict):
+        path = "exports/" + self.filename + "." + self.current_image.format
+        self.current_image.save(path)
+
+    def show_info(self, value: dict):
+        modal = InfoModal(self.current_image, self.filename)
         modal.start()
 
     def customWhite(self, value: dict):

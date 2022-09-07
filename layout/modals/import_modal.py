@@ -1,6 +1,6 @@
 import io
 import os
-import re
+from pathlib import Path
 
 import PySimpleGUI as sg
 import requests
@@ -25,28 +25,24 @@ class ImportModal(Window):
         func_map = {"Import": self.load_image}
         super().__init__(layout, func_map)
         self.current_image = None
+        self.filename = None
 
     def start(self):
-        super().start("Load image", True)
-        return self.current_image
+        super().start("Import image", True)
+        return self.current_image, self.filename
 
     def load_image(self, value: dict):
 
         path = value["-PATH-"]
 
         if validators.url(path):
-            path = re.sub(r"^https", "http", path)
             response = requests.get(path, verify=False)
             self.current_image = Image.open(io.BytesIO(response.content))
-
-            match = re.match(r".+\/([A-z-]+).*$", path)
-            if match != None:
-                path = match[1]
-            else:
-                path = "image"
+            self.filename = "Untitled"
         elif os.path.exists(path):
             self.current_image = Image.open(path)
+            self.filename = Path(path).stem
         else:
-            raise Exception("An error happened when open the image")
+            raise Exception("An error happened when import the image")
 
         self.close()
