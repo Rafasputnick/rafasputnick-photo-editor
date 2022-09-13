@@ -1,8 +1,18 @@
 import copy
 
 import PySimpleGUI as sg
+from filters.blur_filter import BlurFilter
+from filters.box_blur_filter import BoxBlurFilter
 from filters.bw_filter import BwFilter
+from filters.contour_filter import CountourFilter
+from filters.detail_filter import DetailFilter
+from filters.edge_enhance_filter import EdgeEnhanceFilter
+from filters.emboss_filter import EmbossFilter
+from filters.find_edges_filter import FindEdgesFilter
+from filters.gaussian_blur_filter import GaussianBlurFilter
 from filters.sepia_filter import SepiaFilter
+from filters.sharpen_filter import SharpenFilter
+from filters.smooth_filter import SmoothFilter
 from layout.modals.color_filter_modal import ColorFilterModal
 from layout.modals.custom_filter_modal import CustomFilterModal
 from layout.modals.export_modal import ExportModal
@@ -25,7 +35,25 @@ class MainWindow(Window):
                             "File",
                             ["Import", "Export as", "Save", "Info"],
                         ],
-                        ["Filters", ["B&W", "Sepia", "Custom", "Colors"]],
+                        [
+                            "Filters",
+                            [
+                                "B&W",
+                                "Sepia",
+                                "Custom",
+                                "Colors",
+                                "Blur",
+                                "Box Blur",
+                                "Countour",
+                                "Gaussian Blur",
+                                "Detail",
+                                "Sharpen",
+                                "Finding edges",
+                                "Emboss",
+                                "Edge Enhance",
+                                "Smooth",
+                            ],
+                        ],
                     ]
                 )
             ],
@@ -38,6 +66,16 @@ class MainWindow(Window):
             "Info": self.show_info,
             "BW": self.aply_bw_filter,
             "Sepia": self.aply_sepia_filter,
+            "Blur": self.aply_blur_filter,
+            "Box Blur": self.aply_box_blur_filter,
+            "Countour": self.aply_countour_filter,
+            "Detail": self.aply_datail_filter,
+            "Smooth": self.aply_smooth_filter,
+            "Sharpen": self.aply_sharpen_filter,
+            "Gaussian Blur": self.aply_gaussian_blur_filter,
+            "Finding edges": self.aply_finding_edges_filter,
+            "Emboss": self.aply_emboss_filter,
+            "Edge Enhance": self.aply_edge_enhance_filter,
             "Custom": self.customWhite,
             "Colors": self.colorFilter,
             "Undo": self.undo,
@@ -117,6 +155,36 @@ class MainWindow(Window):
 
     def aply_sepia_filter(self, value: dict):
         self.applyFilter(SepiaFilter())
+
+    def aply_blur_filter(self, value: dict):
+        self.applyFilter(BlurFilter())
+
+    def aply_box_blur_filter(self, value: dict):
+        self.applyFilter(BoxBlurFilter())
+
+    def aply_countour_filter(self, value: dict):
+        self.applyFilter(CountourFilter())
+
+    def aply_datail_filter(self, value: dict):
+        self.applyFilter(DetailFilter())
+
+    def aply_edge_enhance_filter(self, value: dict):
+        self.applyFilter(EdgeEnhanceFilter())
+
+    def aply_emboss_filter(self, value: dict):
+        self.applyFilter(EmbossFilter())
+
+    def aply_finding_edges_filter(self, value: dict):
+        self.applyFilter(FindEdgesFilter())
+
+    def aply_gaussian_blur_filter(self, value: dict):
+        self.applyFilter(GaussianBlurFilter())
+
+    def aply_sharpen_filter(self, value: dict):
+        self.applyFilter(SharpenFilter())
+
+    def aply_smooth_filter(self, value: dict):
+        self.applyFilter(SmoothFilter())
 
     def undo(self, value: dict):
         new_state = self.clone_image_state()
