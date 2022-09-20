@@ -6,4 +6,4 @@ from filters.filter import Filter
 
 class CountourFilter(Filter):
     def apply(self, image: Image):
-        image.filter(ImageFilter.CONTOUR)
+        return image.filter(ImageFilter.CONTOUR)

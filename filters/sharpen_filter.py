@@ -6,4 +6,4 @@ from filters.filter import Filter
 
 class SharpenFilter(Filter):
     def apply(self, image: Image):
-        image.filter(ImageFilter.SHARPEN)
+        return image.filter(ImageFilter.SHARPEN)

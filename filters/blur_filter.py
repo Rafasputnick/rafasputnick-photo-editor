@@ -7,4 +7,4 @@ from filters.filter import Filter
 
 class BlurFilter(Filter):
     def apply(self, image: Image):
-        image.filter(ImageFilter.BLUR)
+        return image.filter(ImageFilter.BLUR)

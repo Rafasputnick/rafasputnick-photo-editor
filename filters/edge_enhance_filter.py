@@ -6,4 +6,4 @@ from filters.filter import Filter
 
 class EdgeEnhanceFilter(Filter):
     def apply(self, image: Image):
-        image.filter(ImageFilter.EDGE_ENHANCE)
+        return image.filter(ImageFilter.EDGE_ENHANCE)

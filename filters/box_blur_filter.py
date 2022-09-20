@@ -6,4 +6,4 @@ from filters.filter import Filter
 
 class BoxBlurFilter(Filter):
     def apply(self, image: Image):
-        image.filter(ImageFilter.BoxBlur(radius=3))
+        return image.filter(ImageFilter.BoxBlur(radius=3))

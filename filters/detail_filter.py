@@ -6,4 +6,4 @@ from filters.filter import Filter
 
 class DetailFilter(Filter):
     def apply(self, image: Image):
-        image.filter(ImageFilter.DETAIL)
+        return image.filter(ImageFilter.DETAIL)

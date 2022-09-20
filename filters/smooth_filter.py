@@ -6,4 +6,4 @@ from filters.filter import Filter
 
 class SmoothFilter(Filter):
     def apply(self, image: Image):
-        image.filter(ImageFilter.SMOOTH)
+        return image.filter(ImageFilter.SMOOTH)
