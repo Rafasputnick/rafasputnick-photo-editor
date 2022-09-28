@@ -2,9 +2,10 @@ import PySimpleGUI as sg
 
 
 class Window:
-    def __init__(self, layout: list, func_map: dict, bind_map: dict = None):
+    def __init__(self, layout: list, func_map_with_value: dict, func_map: dict, bind_map: dict = None):
         self.layout = layout
         self.func_map = func_map
+        self.func_map_with_value = func_map_with_value
         self.window = None
         self.keep_open = True
         self.bind_map = bind_map
@@ -14,8 +15,14 @@ class Window:
 
     def handle_event(self, event: str, value: dict) -> str:
         try:
+            if event in self.func_map_with_value:
+                return self.func_map_with_value[event](value)
             if event in self.func_map:
-                return self.func_map[event](value)
+                if type(self.func_map[event]) == list:
+                    func = self.func_map[event][0]
+                    arg = self.func_map[event][1]
+                    return func(arg)
+                return self.func_map[event]()
             elif event != "Exit" and event != sg.WINDOW_CLOSED and self.keep_open:
                 print("Erro ao encontrar evento")
 

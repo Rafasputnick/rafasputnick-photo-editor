@@ -33,8 +33,9 @@ class ExportModal(Window):
             ],
             [sg.Button("Export")],
         ]
-        func_map = {"Export": self.export}
-        super().__init__(layout, func_map)
+        func_map_with_value = {"Export": self.export}
+        func_map = {}
+        super().__init__(layout, func_map_with_value, func_map)
         self.current_image = image
         self.filename = filename
 

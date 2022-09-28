@@ -1,7 +1,4 @@
 import io
-import os
-
-from PIL import Image
 from PySimpleGUI import Window
 
 from layout.windows.state_image import StateImage

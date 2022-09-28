@@ -22,8 +22,9 @@ class ImportModal(Window):
                 sg.Button("Import"),
             ]
         ]
-        func_map = {"Import": self.load_image}
-        super().__init__(layout, func_map)
+        func_map_with_value = {"Import": self.load_image}
+        func_map = {}
+        super().__init__(layout, func_map_with_value, func_map)
         self.current_image = None
         self.filename = None
 

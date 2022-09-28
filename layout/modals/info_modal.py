@@ -47,8 +47,9 @@ class InfoModal(Window):
 
         layout += [[sg.Button("Geolocalization"), sg.Button("Close")]]
 
+        func_map_with_value = {}
         func_map = {"Close": self.close, "Geolocalization": self.open_google_maps}
-        super().__init__(layout, func_map)
+        super().__init__(layout, func_map_with_value, func_map)
 
     def start(self):
         super().start("Image info", True)
@@ -76,7 +77,7 @@ class InfoModal(Window):
 
         return exif_data
 
-    def open_google_maps(self, value: dict):
+    def open_google_maps(self):
 
         gps_info = self.info_map["GPSInfo"]
 
