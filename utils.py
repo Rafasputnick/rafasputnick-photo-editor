@@ -11,9 +11,10 @@ def update_image(
         bio = io.BytesIO()
         image = state_image.current_image
         image.save(bio, format="PNG")
-        window["-IMAGE-"].update(data=bio.getvalue(), size=(500, 500))
+        img_object = window["-IMAGE-"].draw_image(data=bio.getvalue(), location=(0, 500))
         if register_change:
             shortcut.register_change(state_image)
+        return img_object
 
 
 def set_palette(white: tuple):

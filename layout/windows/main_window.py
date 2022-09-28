@@ -13,6 +13,11 @@ class MainWindow(Window):
     def __init__(self):
         self.shortcut = UndoReundo()
         self.image_state = StateImage()
+        self.dragging = False
+        self.rectangle = None
+        self.rectangle_initial = None
+        self.end_rectangle = None
+        self.img_object = None
         layout = [
             [
                 sg.Menu(
@@ -43,9 +48,9 @@ class MainWindow(Window):
                     ]
                 )
             ],
-            [sg.Image(key="-IMAGE-", expand_x=True, expand_y=True)],
+            [sg.Graph(key="-IMAGE-", canvas_size=(500,500), graph_bottom_left=(0, 0), graph_top_right=(500, 500), change_submits=True, drag_submits=True)],
         ]
-        func_map_with_value = { }
+        func_map_with_value = { "-IMAGE-" : self.draw_crop_area }
         func_map = {
             "Import": self.import_image,
             "Export as": self.export_image,
@@ -67,6 +72,7 @@ class MainWindow(Window):
             "Finding edges": [self.applyFilter, finding_edges_filter],
             "Emboss": [self.applyFilter, emboss_filter],
             "Edge Enhance": [self.applyFilter, edge_enhance_filter],
+            "-IMAGE-+UP" : self.crop_area_selected,
         }
         bind_map = {
             "<Control-Shift-Key-Z>": "Reundo",
@@ -85,6 +91,36 @@ class MainWindow(Window):
     def start(self):
         super().start("Sputnick Photo Editor")
 
+    def crop_area_selected(self):
+        self.dragging = False
+        x1 = min(self.rectangle_initial[0], self.end_rectangle[0])
+        y1 = 500 - max(self.rectangle_initial[1], self.end_rectangle[1])
+        
+        x2 = max(self.rectangle_initial[0], self.end_rectangle[0])
+        y2 = 500 - min(self.rectangle_initial[1], self.end_rectangle[1])
+
+        self.window["-IMAGE-"].delete_figure(self.img_object)
+        new_state = self.clone_image_state()
+        new_state.current_image = new_state.current_image.crop((x1, y1, x2, y2))
+        self.window["-IMAGE-"].delete_figure(self.rectangle)
+        self.img_object = update_image(new_state, self.window, self.shortcut)
+        self.image_state = new_state
+
+        
+
+
+    def draw_crop_area(self, value: dict):
+        x, y = value["-IMAGE-"]
+        if not self.dragging:
+            self.rectangle_initial = (x, y)
+            self.dragging = True
+        else:
+            self.end_rectangle = (x, y)
+        if self.rectangle:
+            self.window["-IMAGE-"].delete_figure(self.rectangle)
+        if None not in (self.rectangle_initial, self.end_rectangle):
+            self.rectangle = self.window["-IMAGE-"].draw_rectangle(self.rectangle_initial, self.end_rectangle, line_color='red')
+
     def clone_image_state(self):
         return copy.deepcopy(self.image_state)
 
@@ -92,14 +128,14 @@ class MainWindow(Window):
         new_state = self.clone_image_state()
         modal = ImportModal()
         new_state.current_image, new_state.filename = modal.start()
-        update_image(new_state, self.window, self.shortcut)
+        self.img_object = update_image(new_state, self.window, self.shortcut)
         self.image_state = new_state
 
     def export_image(self):
         new_state = self.clone_image_state()
         modal = ExportModal(new_state.current_image, new_state.filename)
         new_state.current_image, new_state.filename = modal.start()
-        update_image(new_state, self.window, self.shortcut)
+        self.img_object = update_image(new_state, self.window, self.shortcut)
         self.image_state = new_state
 
     def save(self):
@@ -119,19 +155,19 @@ class MainWindow(Window):
     def applyFilter(self, filter):
         new_state = self.clone_image_state()
         new_state.current_image = filter(new_state.current_image)
-        update_image(new_state, self.window, self.shortcut)
+        self.img_object = update_image(new_state, self.window, self.shortcut)
         self.image_state = new_state
 
     def undo(self):
         new_state = self.clone_image_state()
         new_state, change = self.shortcut.undo()
         if change:
-            update_image(new_state, self.window, self.shortcut, False)
+            self.img_object = update_image(new_state, self.window, self.shortcut, False)
             self.image_state = new_state
 
     def reundo(self):
         new_state = self.clone_image_state()
         new_state, change = self.shortcut.reundo()
         if change:
-            update_image(new_state, self.window, self.shortcut, False)
+            self.img_object = update_image(new_state, self.window, self.shortcut, False)
             self.image_state = new_state
