@@ -1,6 +1,7 @@
 import copy
 
 import PySimpleGUI as sg
+from enhances import *
 from filters import *
 from layout.modals.modals_module import *
 from layout.shortcut.shortcuts_module import *
@@ -47,13 +48,8 @@ class MainWindow(Window):
                                 "Smooth",
                             ],
                         ],
-                        ["Trasform", 
-                            [
-                                "Crop Selection",
-                                "Invert",
-                                "Resize",
-                                "Rotate"                                
-                            ]],
+                        ["Trasform", ["Crop Selection", "Invert", "Resize", "Rotate"]],
+                        ["Enhance", ["Brightness", "Contrast", "Color", "Sharpness"]],
                     ]
                 )
             ],
@@ -90,11 +86,13 @@ class MainWindow(Window):
             "Finding edges": [self.apply_change, finding_edges_filter],
             "Emboss": [self.apply_change, emboss_filter],
             "Edge Enhance": [self.apply_change, edge_enhance_filter],
-            
             "Invert": [self.apply_change, invert_image],
             "Resize": [self.apply_change, resize_image],
             "Rotate": [self.apply_change, rotate_image],
-            
+            "Brightness": [self.apply_change, enhance_brightness],
+            "Contrast": [self.apply_change, enhance_contrast],
+            "Color": [self.apply_change, enhance_color],
+            "Sharpness": [self.apply_change, enhance_sharpness],
             "-IMAGE-+UP": self.crop_area_selected,
             "Crop Selection": self.set_selection_visible,
         }

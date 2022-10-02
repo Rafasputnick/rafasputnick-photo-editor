@@ -5,3 +5,4 @@ from layout.modals.import_modal import ImportModal
 from layout.modals.info_modal import InfoModal
 from layout.modals.resize_modal import ResizeModal
 from layout.modals.rotate_modal import RotateModal
+from layout.modals.enhance_modal import EnhanceModal
