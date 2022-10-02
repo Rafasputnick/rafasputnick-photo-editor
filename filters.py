@@ -1,8 +1,7 @@
 from PIL import Image, ImageFilter
 
-from layout.modals.color_filter_modal import ColorFilterModal
-from layout.modals.custom_filter_modal import CustomFilterModal
-from utils import set_palette
+from layout.modals.modals_module import *
+from utils import *
 
 
 def bw_filter(image: Image):

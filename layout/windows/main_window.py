@@ -6,6 +6,7 @@ from layout.modals.modals_module import *
 from layout.shortcut.shortcuts_module import *
 from layout.windows.state_image import StateImage
 from layout.windows.window import Window
+from transformations import *
 from utils import update_image
 
 
@@ -18,6 +19,7 @@ class MainWindow(Window):
         self.rectangle_initial = None
         self.end_rectangle = None
         self.img_object = None
+        self.selection_visible = False
         layout = [
             [
                 sg.Menu(
@@ -45,12 +47,28 @@ class MainWindow(Window):
                                 "Smooth",
                             ],
                         ],
+                        ["Trasform", 
+                            [
+                                "Crop Selection",
+                                "Invert",
+                                "Resize",
+                                "Rotate"                                
+                            ]],
                     ]
                 )
             ],
-            [sg.Graph(key="-IMAGE-", canvas_size=(500,500), graph_bottom_left=(0, 0), graph_top_right=(500, 500), change_submits=True, drag_submits=True)],
+            [
+                sg.Graph(
+                    key="-IMAGE-",
+                    canvas_size=(500, 500),
+                    graph_bottom_left=(0, 0),
+                    graph_top_right=(500, 500),
+                    change_submits=True,
+                    drag_submits=True,
+                )
+            ],
         ]
-        func_map_with_value = { "-IMAGE-" : self.draw_crop_area }
+        func_map_with_value = {"-IMAGE-": self.draw_crop_area}
         func_map = {
             "Import": self.import_image,
             "Export as": self.export_image,
@@ -58,21 +76,27 @@ class MainWindow(Window):
             "Info": self.show_info,
             "Undo": self.undo,
             "Reundo": self.reundo,
-            "Custom": [self.applyFilter, custom_white_filter],
-            "Colors": [self.applyFilter, color_filter],
-            "BW": [self.applyFilter, bw_filter],
-            "Sepia": [self.applyFilter, sepia_filter],
-            "Blur": [self.applyFilter, blur_filter],
-            "Box Blur": [self.applyFilter, box_blur_filter],
-            "Countour": [self.applyFilter, countour_filter],
-            "Detail": [self.applyFilter, datail_filter],
-            "Smooth": [self.applyFilter, smooth_filter],
-            "Sharpen": [self.applyFilter, sharpen_filter],
-            "Gaussian Blur": [self.applyFilter, gaussian_blur_filter],
-            "Finding edges": [self.applyFilter, finding_edges_filter],
-            "Emboss": [self.applyFilter, emboss_filter],
-            "Edge Enhance": [self.applyFilter, edge_enhance_filter],
-            "-IMAGE-+UP" : self.crop_area_selected,
+            "Custom": [self.apply_change, custom_white_filter],
+            "Colors": [self.apply_change, color_filter],
+            "BW": [self.apply_change, bw_filter],
+            "Sepia": [self.apply_change, sepia_filter],
+            "Blur": [self.apply_change, blur_filter],
+            "Box Blur": [self.apply_change, box_blur_filter],
+            "Countour": [self.apply_change, countour_filter],
+            "Detail": [self.apply_change, datail_filter],
+            "Smooth": [self.apply_change, smooth_filter],
+            "Sharpen": [self.apply_change, sharpen_filter],
+            "Gaussian Blur": [self.apply_change, gaussian_blur_filter],
+            "Finding edges": [self.apply_change, finding_edges_filter],
+            "Emboss": [self.apply_change, emboss_filter],
+            "Edge Enhance": [self.apply_change, edge_enhance_filter],
+            
+            "Invert": [self.apply_change, invert_image],
+            "Resize": [self.apply_change, resize_image],
+            "Rotate": [self.apply_change, rotate_image],
+            
+            "-IMAGE-+UP": self.crop_area_selected,
+            "Crop Selection": self.set_selection_visible,
         }
         bind_map = {
             "<Control-Shift-Key-Z>": "Reundo",
@@ -91,37 +115,45 @@ class MainWindow(Window):
     def start(self):
         super().start("Sputnick Photo Editor")
 
+    def set_selection_visible(self):
+        if self.image_state.current_image != None:
+            self.selection_visible = True
+
     def crop_area_selected(self):
-        self.dragging = False
-        x1 = min(self.rectangle_initial[0], self.end_rectangle[0])
-        y1 = 500 - max(self.rectangle_initial[1], self.end_rectangle[1])
-        
-        x2 = max(self.rectangle_initial[0], self.end_rectangle[0])
-        y2 = 500 - min(self.rectangle_initial[1], self.end_rectangle[1])
+        if self.selection_visible:
 
-        self.window["-IMAGE-"].delete_figure(self.img_object)
-        new_state = self.clone_image_state()
-        new_state.current_image = new_state.current_image.crop((x1, y1, x2, y2))
-        self.window["-IMAGE-"].delete_figure(self.rectangle)
-        self.img_object = update_image(new_state, self.window, self.shortcut)
-        self.image_state = new_state
+            self.dragging = False
+            x1 = min(self.rectangle_initial[0], self.end_rectangle[0])
+            y1 = 500 - max(self.rectangle_initial[1], self.end_rectangle[1])
 
-        
+            x2 = max(self.rectangle_initial[0], self.end_rectangle[0])
+            y2 = 500 - min(self.rectangle_initial[1], self.end_rectangle[1])
 
+            new_state = self.clone_image_state()
+            new_state.current_image = new_state.current_image.crop((x1, y1, x2, y2))
+            self.window["-IMAGE-"].delete_figure(self.rectangle)
+            self.img_object = update_image(new_state, self.window, self.shortcut)
+            self.image_state = new_state
+            self.selection_visible = False
 
     def draw_crop_area(self, value: dict):
-        x, y = value["-IMAGE-"]
-        if not self.dragging:
-            self.rectangle_initial = (x, y)
-            self.dragging = True
-        else:
-            self.end_rectangle = (x, y)
-        if self.rectangle:
-            self.window["-IMAGE-"].delete_figure(self.rectangle)
-        if None not in (self.rectangle_initial, self.end_rectangle):
-            self.rectangle = self.window["-IMAGE-"].draw_rectangle(self.rectangle_initial, self.end_rectangle, line_color='red')
+        if self.selection_visible:
+            x, y = value["-IMAGE-"]
+            if not self.dragging:
+                self.rectangle_initial = (x, y)
+                self.dragging = True
+            else:
+                self.end_rectangle = (x, y)
+            if self.rectangle:
+                self.window["-IMAGE-"].delete_figure(self.rectangle)
+            if None not in (self.rectangle_initial, self.end_rectangle):
+                self.rectangle = self.window["-IMAGE-"].draw_rectangle(
+                    self.rectangle_initial, self.end_rectangle, line_color="red"
+                )
 
     def clone_image_state(self):
+        if self.image_state.current_image != None:
+            self.window["-IMAGE-"].delete_figure(self.img_object)
         return copy.deepcopy(self.image_state)
 
     def import_image(self):
@@ -152,9 +184,9 @@ class MainWindow(Window):
         modal = InfoModal(self.image_state.current_image, self.image_state.filename)
         modal.start()
 
-    def applyFilter(self, filter):
+    def apply_change(self, change_function):
         new_state = self.clone_image_state()
-        new_state.current_image = filter(new_state.current_image)
+        new_state.current_image = change_function(new_state.current_image)
         self.img_object = update_image(new_state, self.window, self.shortcut)
         self.image_state = new_state
 

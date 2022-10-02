@@ -14,7 +14,7 @@ class Window:
         self.window.close()
 
     def handle_event(self, event: str, value: dict) -> str:
-        try:
+        # try:
             if event in self.func_map_with_value:
                 return self.func_map_with_value[event](value)
             if event in self.func_map:
@@ -26,8 +26,8 @@ class Window:
             elif event != "Exit" and event != sg.WINDOW_CLOSED and self.keep_open:
                 print("Erro ao encontrar evento")
 
-        except Exception as error:
-            sg.Popup("ERROR", error, icon="image/error.ico")
+        # except Exception as error:
+        #     sg.Popup("ERROR", error, icon="image/error.ico")
 
     def close(self):
         self.keep_open = False
