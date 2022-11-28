@@ -57,6 +57,8 @@ class MainWindow(Window):
                 sg.Graph(
                     key="-IMAGE-",
                     canvas_size=(500, 500),
+                    expand_x = True,
+                    expand_y = True,
                     graph_bottom_left=(0, 0),
                     graph_top_right=(500, 500),
                     change_submits=True,

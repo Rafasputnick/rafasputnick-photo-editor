@@ -39,7 +39,7 @@ class ImportModal(Window):
         if validators.url(path):
             response = requests.get(path, verify=False)
             self.current_image = Image.open(io.BytesIO(response.content))
-            self.current_image.thumbnail((500, 500))
+            # self.current_image.thumbnail((500, 500))
             self.filename = "Untitled"
         elif os.path.exists(path):
             self.current_image = Image.open(path)
