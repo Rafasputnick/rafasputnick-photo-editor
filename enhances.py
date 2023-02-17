@@ -2,7 +2,6 @@ from PIL import Image, ImageEnhance
 
 from layout.modals.modals_module import *
 
-
 def enhance_brightness(image: Image):
     return enhance_process(ImageEnhance.Brightness(image), EnhanceModal("Brightness"))
 
