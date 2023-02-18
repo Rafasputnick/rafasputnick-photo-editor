@@ -22,3 +22,4 @@ def enhance_sharpness(image: Image):
 def enhance_process(enhancer, modal):
     enhance_factor = modal.start()
     return enhancer.enhance(enhance_factor)
+    
